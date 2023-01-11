@@ -1,0 +1,18 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+.main {
+  position: relative;
+  width: 90vw;
+  height: auto;
+  background-color: aqua;
+}
+#output {
+  margin: 5%;
+  justify-content: center;
+  width: 90%;
+  height: 90%;
+  word-wrap: break-word;
+}
