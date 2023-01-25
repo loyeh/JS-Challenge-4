@@ -33,10 +33,25 @@ for (let i = 1; i < 10; i++) {
 
 //takes a number and convert it to words
 function number_to_word_converter(num) {
+  let text = "";
   let key_one = num % 10;
   let key_ten = (num % 100) - key_one;
   let key_hundred = (num % 1000) - key_ten - key_one;
-  return obj[key_hundred] + obj[key_ten] + obj[key_one];
+  if (obj[key_hundred]) {
+    text += obj[key_hundred];
+  }
+  if(10<num<20){}
+  if (obj[key_ten]) {text+=obj[key11to19]
+    text += obj[key_ten];
+  }
+  if (obj[key_one]) {
+    text += obj[key_one];
+  }
+  if (num % 100 === 0) {
+    text.replace("and", "");
+  }
+
+  return text;
 }
 
 // console.log(number_to_word_converter(886));
@@ -49,5 +64,11 @@ function number_of_charectors(n, m) {
   }
   return number_of_chars;
 }
+// console.log(number_of_charectors(1, 1000));
 
-console.log(number_of_charectors(1, 1000));
+let arr = new Array(25);
+for (let i = 98; i < 123; i++) {
+  arr[i - 1] = number_to_word_converter(i);
+}
+
+console.log(arr);
