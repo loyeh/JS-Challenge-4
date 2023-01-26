@@ -25,7 +25,7 @@ function deliveryTimeCalculator(year) {
 }
 
 function isLeapYear(year) {
-  if (deliveryTimeCalculator(year).hour > 12 && deliveryTimeCalculator(year - 1).hour < 12) {
+  if (deliveryTimeCalculator(year).hour < 12 && deliveryTimeCalculator(year + 1).hour >= 12) {
     return true;
   } else {
     return false;
@@ -45,21 +45,22 @@ function maxDays(month, year) {
 }
 
 function tommarowCalculator(today) {
-  let dayOfMonth, dayOfWeek, year, month;
-  year = today.year + Math.floor((today.month + Math.floor((today.dayOfMonth + 1) / maxDays(today.month, today.year))) / 12);
-
-  month = (today.month + Math.floor((today.dayOfMonth + 1) / maxDays(today.month, today.year))) % 12;
-  if (month === 0) {
-    month = 12;
+  let year = today.year;
+  let month = today.month;
+  let dayOfMonth = today.dayOfMonth;
+  let dayOfWeek = (today.dayOfWeek + 1) % 7;
+  if (dayOfMonth === maxDays(month, year)) {
+    if (month === 12) {
+      year++;
+      month = 1;
+      dayOfMonth = 1;
+    } else {
+      dayOfMonth = 1;
+      month++;
+    }
+  } else {
+    dayOfMonth++;
   }
-
-  dayOfMonth = (today.dayOfMonth + 1) % maxDays(today.month, today.year);
-  dayOfWeek = (today.dayOfWeek + 1) % 7;
-
-  if (dayOfMonth === 0) {
-    dayOfMonth = maxDays(today.month, today.year);
-  }
-
   const tomarrow = new MyDate(year, month, dayOfMonth, dayOfWeek);
   return tomarrow;
 }
@@ -67,6 +68,7 @@ function tommarowCalculator(today) {
 let startDate = new MyDate(1400, 1, 1, 1);
 let counter = 0;
 
+console.log(tommarowCalculator(startDate));
 while (startDate.year < 1500) {
   startDate = tommarowCalculator(startDate);
 
@@ -74,4 +76,4 @@ while (startDate.year < 1500) {
     counter++;
   }
 }
-console.log(counter);
+console.log(startDate, counter);
