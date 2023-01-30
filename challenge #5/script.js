@@ -3,74 +3,86 @@ class MyDate {
     (this.year = year), (this.month = month), (this.dayOfMonth = dayOfMonth), (this.dayOfWeek = dayOfWeek);
   }
 }
+
 class DeliveryTime {
-  constructor(hour, minute, secound) {
-    (this.hour = hour), (this.minute = minute), (this.secound = secound);
-  }
-}
-function deliveryTimeCalculator(year) {
-  // 5 hours            (5×60×60) +
-  // 48 minutes            (48×60) +
-  // 46 seconds                46
-  //                     --------
-  //                        20926
-  // difference between to years in seconds
-  let DeliveryTimeSecond = ((1400 - year) * 20926) % (24 * 60 * 60);
-  let hours = Math.floor((Math.floor(DeliveryTimeSecond / 3600) + 13) % 24);
-  let minutes = Math.floor((Math.floor((DeliveryTimeSecond % 3600) / 60) + 7) % 60);
-  let seconds = Math.floor(((DeliveryTimeSecond % 60) + 28) % 60);
-  const deliveryTime = new DeliveryTime(hours, minutes, seconds);
-  return deliveryTime;
-}
-function isLeapYear(year) {
-  if (deliveryTimeCalculator(year).hour < 12 && deliveryTimeCalculator(year + 1).hour >= 12) {
-    return true;
-  } else {
-    return false;
-  }
-}
-function maxDays(month, year) {
-  if (month <= 6) {
-    return 31;
-  } else if (month < 12) {
-    return 30;
-  } else if (!isLeapYear(year)) {
-    return 29;
-  } else {
-    return 30;
+  constructor(year, hour, minute, secound) {
+    (this.year = year), (this.hour = hour), (this.minute = minute), (this.secound = secound);
   }
 }
 
-function yesterdayCalculator(today) {
+const referenceYear = new MyDate(1400, 1, 1, 1);
+
+const referenceYearDelivery = new DeliveryTime(1400, 13, 7, 28);
+
+const fullDayLength = 24 * 60 * 60;
+
+const yearDeliveryDifference = 5 * 3600 + 48 * 60 + 46;
+
+function deliveryTimeCalculator(year) {
+  let yearsDifference = year - referenceYearDelivery.year;
+  let referenceDeliverySecound = referenceYearDelivery.hour * 3600 + referenceYearDelivery.minute * 60 + referenceYearDelivery.secound;
+  return (yearsDifference * yearDeliveryDifference + referenceDeliverySecound) % fullDayLength;
+}
+
+function isLeapYear(year) {
+  return deliveryTimeCalculator(year) < fullDayLength / 2 && deliveryTimeCalculator(year + 1) > fullDayLength / 2;
+}
+
+function maxDaysOfMonth(year, month) {
+  if (month <= 6) {
+    return 31;
+  } else if (month < 12 || isLeapYear(year)) {
+    return 30;
+  } else {
+    return 29;
+  }
+}
+let today = new MyDate(1400, 1, 1, 1);
+function tomorrowCalc(today) {
   let year = today.year;
   let month = today.month;
   let dayOfMonth = today.dayOfMonth;
-  let dayOfWeek = (today.dayOfWeek + 1) % 7;
-  if (dayOfMonth === 1) {
-    if (month === 1) {
-      year--;
-      month = 12;
-      dayOfMonth = maxDays(year, month);
+  let dayOfWeek = today.dayOfWeek;
+  dayOfMonth++;
+  dayOfWeek++;
+  if (dayOfMonth > maxDaysOfMonth(year, month)) {
+    if (month == 12) {
+      year++;
+      month = 1;
     } else {
-      month--;
-      dayOfMonth = maxDays(year, month);
+      month++;
     }
-  } else {
-    dayOfMonth--;
+    dayOfMonth = 1;
   }
-  const yesterday = new MyDate(year, month, dayOfMonth, dayOfWeek);
-  return yesterday;
+  tomorrow = new MyDate(year, month, dayOfMonth, dayOfWeek % 7);
+  return tomorrow;
 }
-
-let startDate = new MyDate(1400, 1, 1, 1);
-
-while (startDate.year > 1) {
-  startDate = yesterdayCalculator(startDate);
+let counter = 0;
+while (today.year < 1500) {
+  let tomorrow = tomorrowCalc(today);
+  if (tomorrow.dayOfMonth == 1 && tomorrow.dayOfWeek == 0) {
+    counter++;
+  }
+  today = tomorrow;
 }
-while (startDate.month > 1) {
-  startDate = yesterdayCalculator(startDate);
+let dayOfWeek = "";
+switch (today.dayOfWeek) {
+  case 0:
+    dayOfWeek = "Saturday";
+  case 1:
+    dayOfWeek = "Sunday";
+  case 2:
+    dayOfWeek = "Monday";
+  case 3:
+    dayOfWeek = "Tuesday";
+  case 4:
+    dayOfWeek = "Wednesday";
+  case 5:
+    dayOfWeek = "Thursday";
+  case 6:
+    dayOfWeek = "Friday";
 }
-while (startDate.dayOfMonth > 1) {
-  startDate = yesterdayCalculator(startDate);
-}
-console.log(startDate);
+let text1 = `The number of first day of the month wich is saturday is ${counter} days.`;
+let text2 = `The day of the week at ${today.year}/${today.month}/${today.dayOfMonth} is ${dayOfWeek}`;
+console.log(text1);
+console.log(text2);
